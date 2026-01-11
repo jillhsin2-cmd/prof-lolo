@@ -1,0 +1,492 @@
+import React, { useState, useEffect } from 'react';
+import { BookOpen, Brain, Network, Users, ChevronRight, CheckCircle, Lightbulb, ArrowRight, RefreshCw, PenTool, Code, MessageSquare } from 'lucide-react';
+
+const CourseApp = () => {
+  const [activeModule, setActiveModule] = useState('intro');
+
+  const renderModule = () => {
+    switch (activeModule) {
+      case 'intro': return <IntroModule onStart={() => setActiveModule('dikw')} />;
+      case 'dikw': return <DIKWModule onNext={() => setActiveModule('environment')} />;
+      case 'environment': return <EnvironmentModule onNext={() => setActiveModule('communication')} />;
+      case 'communication': return <CommunicationModule onNext={() => setActiveModule('human-ai')} />;
+      case 'human-ai': return <HumanAIModule onNext={() => setActiveModule('quiz')} />;
+      case 'quiz': return <QuizModule onRestart={() => setActiveModule('intro')} />;
+      default: return <IntroModule />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-4 shadow-lg sticky top-0 z-50">
+        <div className="max-w-4xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Brain className="w-6 h-6" />
+            <h1 className="text-xl font-bold tracking-wide">AI 賦能與網頁溝通載體</h1>
+          </div>
+          <div className="text-sm font-light bg-blue-900/50 px-3 py-1 rounded-full">
+            互動學習系統
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="max-w-4xl mx-auto p-4 md:p-6 mb-20">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden min-h-[600px] relative transition-all duration-300">
+          {renderModule()}
+        </div>
+      </main>
+
+      {/* Navigation Footer */}
+      <nav className="fixed bottom-0 w-full bg-white border-t border-slate-200 p-4 safe-area-bottom z-40">
+        <div className="max-w-4xl mx-auto flex justify-between overflow-x-auto gap-2 no-scrollbar">
+          {[
+            { id: 'intro', icon: BookOpen, label: '導論' },
+            { id: 'dikw', icon: Lightbulb, label: 'DIKW 模型' },
+            { id: 'environment', icon: Network, label: '宏觀環境' },
+            { id: 'communication', icon: MessageSquare, label: '溝通載體' },
+            { id: 'human-ai', icon: Users, label: '人機協作' },
+            { id: 'quiz', icon: CheckCircle, label: '測驗' },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveModule(item.id)}
+              className={`flex flex-col items-center min-w-[64px] p-2 rounded-lg transition-colors ${
+                activeModule === item.id
+                  ? 'text-blue-600 bg-blue-50 font-medium'
+                  : 'text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              <item.icon className="w-5 h-5 mb-1" />
+              <span className="text-xs whitespace-nowrap">{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
+    </div>
+  );
+};
+
+// --- Module 1: Introduction ---
+const IntroModule = ({ onStart }) => (
+  <div className="p-8 h-full flex flex-col justify-center items-center text-center space-y-8 animate-fade-in">
+    <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-4 animate-bounce-slow">
+      <Code className="w-12 h-12" />
+    </div>
+    <h2 className="text-3xl font-bold text-slate-800">歡迎來到 AI 網頁開發課程</h2>
+    <p className="text-lg text-slate-600 max-w-lg leading-relaxed">
+      本課程將帶你探索如何運用 <b>Gemini (邏輯)</b> 與 <b>Canva (視覺)</b>，
+      打造出作為「溝通載體」的網頁，並深入了解背後的 DIKW 與人機協作哲學。
+    </p>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl mt-8">
+      <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 flex items-center gap-4 hover:shadow-md transition-shadow">
+        <div className="bg-purple-100 p-3 rounded-lg text-purple-600"><Brain size={24}/></div>
+        <div className="text-left">
+          <h3 className="font-bold text-slate-800">Gemini</h3>
+          <p className="text-sm text-slate-500">負責產出邏輯與程式碼</p>
+        </div>
+      </div>
+      <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 flex items-center gap-4 hover:shadow-md transition-shadow">
+        <div className="bg-cyan-100 p-3 rounded-lg text-cyan-600"><PenTool size={24}/></div>
+        <div className="text-left">
+          <h3 className="font-bold text-slate-800">Canva</h3>
+          <p className="text-sm text-slate-500">負責視覺設計與素材</p>
+        </div>
+      </div>
+    </div>
+
+    <button onClick={onStart} className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-transform hover:scale-105">
+      開始學習 <ArrowRight className="w-5 h-5" />
+    </button>
+  </div>
+);
+
+// --- Module 2: DIKW Pyramid ---
+const DIKWModule = ({ onNext }) => {
+  const [level, setLevel] = useState(null);
+
+  const levels = [
+    { id: 'w', title: 'Wisdom (智慧)', desc: '價值觀、判斷、行為。這是人類與 AI 的最高層次目標。', color: 'bg-red-500', w: 'w-24' },
+    { id: 'k', title: 'Knowledge (知識)', desc: '具備脈絡的資訊。AI 透過大量學習建立知識庫。', color: 'bg-orange-400', w: 'w-48' },
+    { id: 'i', title: 'Information (資訊)', desc: '經過整理的資料。有意義的數據集合。', color: 'bg-yellow-400', w: 'w-72' },
+    { id: 'd', title: 'Data (資料)', desc: '特徵：量大 (Big)、速度快、多樣性。AI 的基礎養分。', color: 'bg-green-500', w: 'w-96' },
+  ];
+
+  return (
+    <div className="p-8 h-full flex flex-col items-center animate-fade-in">
+      <h2 className="text-2xl font-bold mb-2">從數據到智慧：DIKW 模型</h2>
+      <p className="text-slate-500 mb-8">點擊金字塔的不同層級，查看其定義與 AI 的關聯。</p>
+
+      <div className="flex-1 flex flex-col justify-center items-center w-full min-h-[350px] relative">
+        {levels.map((l) => (
+          <button
+            key={l.id}
+            onClick={() => setLevel(l)}
+            className={`${l.w} ${l.color} ${level?.id === l.id ? 'scale-105 shadow-xl ring-4 ring-white' : 'opacity-80 hover:opacity-100'} 
+            h-16 mb-1 rounded-sm text-white font-bold transition-all duration-300 flex items-center justify-center transform`}
+          >
+            {l.id.toUpperCase()}
+          </button>
+        ))}
+        
+        {/* Info Card Overlay */}
+        {level && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/95 backdrop-blur shadow-2xl p-6 rounded-xl border border-slate-200 w-80 text-center animate-pop-in z-10">
+            <h3 className="text-xl font-bold text-slate-800 mb-2">{level.title}</h3>
+            <p className="text-slate-600 mb-4">{level.desc}</p>
+            <button 
+              onClick={(e) => { e.stopPropagation(); setLevel(null); }}
+              className="text-sm text-blue-600 hover:underline"
+            >
+              關閉
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-8 w-full flex justify-end">
+        <button onClick={onNext} className="btn-secondary">
+          下一章：宏觀環境 <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// --- Module 3: Environment (PESTEL & Gen AI) ---
+const EnvironmentModule = ({ onNext }) => {
+  return (
+    <div className="p-8 h-full overflow-y-auto animate-fade-in">
+      <h2 className="text-2xl font-bold mb-6">宏觀環境與 Gen AI 技術</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* PESTEL Card */}
+        <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+          <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-700">
+            <Network className="w-5 h-5" />
+            PESTEL 分析
+          </h3>
+          <div className="grid grid-cols-3 gap-2 text-center text-sm">
+            {['政治', '經濟', '社會', '科技', '環境', '法律'].map(item => (
+              <div key={item} className="bg-white py-2 rounded shadow-sm border border-slate-100 text-slate-600">
+                {item}
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-sm text-slate-500">
+            我們目前特別關注 <b>科技 (Technology)</b> 領域中的 <b>AI</b> 發展。
+          </p>
+        </div>
+
+        {/* Gen AI Card */}
+        <div className="bg-blue-50 p-5 rounded-xl border border-blue-100">
+          <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-blue-800">
+            <Brain className="w-5 h-5" />
+            Gen AI 核心特徵
+          </h3>
+          <ul className="space-y-3">
+            <li className="flex items-start gap-2">
+              <span className="bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded font-bold mt-1">推理</span>
+              <span className="text-sm text-slate-700">具備邏輯推演 (Reasoning) 能力，能理解因果。</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded font-bold mt-1">多模態</span>
+              <span className="text-sm text-slate-700">
+                能處理 Text (文)、Speech (語)、Image (圖)、Video (影)。
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="w-full flex justify-end">
+        <button onClick={onNext} className="btn-secondary">
+          下一章：溝通本質 <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// --- Module 4: Communication Model (Interactive) ---
+const CommunicationModule = ({ onNext }) => {
+  const [stage, setStage] = useState(0); // 0: Idle, 1: Sending, 2: Channel, 3: Received
+
+  useEffect(() => {
+    let timer;
+    if (stage === 1) timer = setTimeout(() => setStage(2), 1000);
+    if (stage === 2) timer = setTimeout(() => setStage(3), 1500);
+    return () => clearTimeout(timer);
+  }, [stage]);
+
+  const resetAnim = () => {
+    setStage(0);
+    setTimeout(() => setStage(1), 100);
+  };
+
+  return (
+    <div className="p-8 h-full flex flex-col animate-fade-in">
+      <h2 className="text-2xl font-bold mb-2">網頁的本質：溝通載體</h2>
+      <p className="text-slate-500 mb-8">網頁 (Webpage) 是一個隧道，連接發送者與接收者。</p>
+
+      {/* Animation Container */}
+      <div className="flex-1 bg-slate-100 rounded-xl relative overflow-hidden p-4 flex items-center justify-between px-4 md:px-12 border border-slate-200">
+        
+        {/* Sender */}
+        <div className={`z-10 flex flex-col items-center transition-all duration-500 ${stage >= 1 ? 'scale-110' : 'opacity-70'}`}>
+          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg mb-2">
+            <Users />
+          </div>
+          <span className="font-bold text-slate-700">Sender</span>
+          <span className="text-xs text-slate-500">發送者/認知</span>
+        </div>
+
+        {/* The Tunnel (Medium) */}
+        <div className="flex-1 mx-4 h-24 bg-white border-y-4 border-slate-300 relative flex items-center justify-center">
+          <span className="absolute -top-8 text-xs font-bold text-slate-400">MEDIUM (載體)</span>
+          <div className="text-slate-200 text-4xl font-black tracking-widest select-none opacity-20">HTML</div>
+          
+          {/* Moving Packet */}
+          {stage === 2 && (
+            <div className="absolute w-8 h-8 bg-yellow-400 rounded shadow-md animate-slide-across flex items-center justify-center text-[10px] font-bold text-yellow-800">
+              MSG
+            </div>
+          )}
+        </div>
+
+        {/* Receiver */}
+        <div className={`z-10 flex flex-col items-center transition-all duration-500 ${stage === 3 ? 'scale-110 text-blue-600' : 'opacity-70'}`}>
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center text-white shadow-lg mb-2 transition-colors ${stage === 3 ? 'bg-green-500' : 'bg-slate-400'}`}>
+            <Users />
+          </div>
+          <span className="font-bold text-slate-700">Receiver</span>
+          <span className="text-xs text-slate-500">接收者</span>
+        </div>
+      </div>
+
+      <div className="mt-6 text-center">
+        <button 
+          onClick={resetAnim}
+          className="bg-blue-100 text-blue-700 px-6 py-2 rounded-full font-semibold hover:bg-blue-200 transition-colors flex items-center gap-2 mx-auto"
+        >
+          <RefreshCw className={`w-4 h-4 ${stage !== 3 && stage !== 0 ? 'animate-spin' : ''}`} />
+          {stage === 0 ? '開始傳送模擬' : stage === 3 ? '再次傳送' : '傳送中...'}
+        </button>
+        <p className="text-sm text-slate-400 mt-2">點擊按鈕觀察訊息如何通過 HTML 載體傳遞</p>
+      </div>
+
+      <div className="w-full flex justify-end mt-4">
+        <button onClick={onNext} className="btn-secondary">
+          下一章：人機協作 <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// --- Module 5: Human vs AI (Interactive Cards) ---
+const HumanAIModule = ({ onNext }) => {
+  return (
+    <div className="p-8 h-full overflow-y-auto animate-fade-in">
+      <h2 className="text-2xl font-bold mb-6">人機協作的核心分工</h2>
+      
+      <div className="flex flex-col md:flex-row gap-6 mb-8">
+        
+        {/* Human Card */}
+        <div className="flex-1 bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl border border-orange-200 hover:shadow-lg transition-shadow">
+          <div className="flex items-center gap-3 mb-4 text-orange-700">
+            <Users className="w-8 h-8" />
+            <h3 className="text-xl font-bold">人類 (Human)</h3>
+          </div>
+          <div className="space-y-4">
+            <div className="bg-white/60 p-3 rounded-lg">
+              <span className="font-bold block text-sm text-orange-800 mb-1">職責：總體判斷</span>
+              <p className="text-sm text-slate-600">決定方向、價值觀與最終決策 (Overall Judgment)。</p>
+            </div>
+            <div className="bg-white/60 p-3 rounded-lg">
+              <span className="font-bold block text-sm text-orange-800 mb-1">角色：發起者</span>
+              <p className="text-sm text-slate-600">定義需求，作為溝通的起始點。</p>
+            </div>
+          </div>
+        </div>
+
+        {/* AI Card */}
+        <div className="flex-1 bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 rounded-xl border border-indigo-200 hover:shadow-lg transition-shadow">
+          <div className="flex items-center gap-3 mb-4 text-indigo-700">
+            <Brain className="w-8 h-8" />
+            <h3 className="text-xl font-bold">AI (Gemini)</h3>
+          </div>
+          <div className="space-y-4">
+             <div className="bg-white/60 p-3 rounded-lg">
+              <span className="font-bold block text-sm text-indigo-800 mb-1">職責：技術支援</span>
+              <p className="text-sm text-slate-600">提供邏輯推理、程式碼生成與內容產出。</p>
+            </div>
+             <div className="bg-white/60 p-3 rounded-lg">
+              <span className="font-bold block text-sm text-indigo-800 mb-1">角色：執行者</span>
+              <p className="text-sm text-slate-600">加速載體 (網頁) 的建構過程。</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div className="bg-slate-50 p-4 rounded-lg text-center border border-dashed border-slate-300">
+        <p className="font-semibold text-slate-700">核心觀點</p>
+        <p className="text-slate-500 text-sm mt-1">
+          人類利用 AI 打造「市場載體」，最終將價值傳遞給接收者。
+        </p>
+      </div>
+
+      <div className="w-full flex justify-end mt-6">
+        <button onClick={onNext} className="btn-secondary">
+          進行測驗 <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// --- Module 6: Quiz ---
+const QuizModule = ({ onRestart }) => {
+  const questions = [
+    {
+      q: "網頁 (Webpage) 在溝通模型中的角色是什麼？",
+      options: ["Sender (發送者)", "Receiver (接收者)", "Medium/Carrier (載體)", "Judge (評判者)"],
+      ans: 2
+    },
+    {
+      q: "DIKW 模型中，哪一層次代表「具備脈絡的資訊」？",
+      options: ["Data (資料)", "Information (資訊)", "Knowledge (知識)", "Wisdom (智慧)"],
+      ans: 2
+    },
+    {
+      q: "在這個課程架構中，Gemini 主要負責什麼？",
+      options: ["視覺設計", "邏輯與程式碼", "總體判斷", "市場交易"],
+      ans: 1
+    },
+    {
+      q: "關於 Gen AI 的特徵，下列何者正確？",
+      options: ["只能處理文字", "不具備推理能力", "具有多模態 (Multi-modal) 能力", "是溝通的接收者"],
+      ans: 2
+    }
+  ];
+
+  const [currentQ, setCurrentQ] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showResult, setShowResult] = useState(false);
+  const [selectedOpt, setSelectedOpt] = useState(null);
+
+  const handleAnswer = (idx) => {
+    setSelectedOpt(idx);
+    if (idx === questions[currentQ].ans) setScore(score + 1);
+    
+    setTimeout(() => {
+      if (currentQ < questions.length - 1) {
+        setCurrentQ(currentQ + 1);
+        setSelectedOpt(null);
+      } else {
+        setShowResult(true);
+      }
+    }, 1000);
+  };
+
+  if (showResult) {
+    return (
+      <div className="p-8 h-full flex flex-col items-center justify-center text-center animate-fade-in">
+        <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 mb-6">
+          <Lightbulb className="w-10 h-10" />
+        </div>
+        <h2 className="text-3xl font-bold mb-2">測驗完成！</h2>
+        <p className="text-xl text-slate-600 mb-8">
+          你的得分：<span className="font-bold text-blue-600 text-2xl">{score}</span> / {questions.length}
+        </p>
+        
+        {score === questions.length ? (
+          <p className="text-green-600 font-medium mb-8">太棒了！你已經完全掌握了課程核心。</p>
+        ) : (
+          <p className="text-slate-500 mb-8">還不錯，可以再複習一下喔！</p>
+        )}
+
+        <button 
+          onClick={onRestart}
+          className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
+        >
+          <RefreshCw className="w-5 h-5" /> 重新學習
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-8 h-full flex flex-col animate-fade-in">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-xl font-bold">隨堂測驗</h2>
+        <span className="text-sm font-medium text-slate-400">第 {currentQ + 1} / {questions.length} 題</span>
+      </div>
+
+      <div className="flex-1 flex flex-col justify-center">
+        <h3 className="text-xl font-medium text-slate-800 mb-6 leading-relaxed">
+          {questions[currentQ].q}
+        </h3>
+        
+        <div className="space-y-3">
+          {questions[currentQ].options.map((opt, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleAnswer(idx)}
+              disabled={selectedOpt !== null}
+              className={`w-full p-4 text-left rounded-xl border transition-all duration-200 flex items-center justify-between
+                ${selectedOpt === null 
+                  ? 'bg-white border-slate-200 hover:border-blue-300 hover:bg-blue-50' 
+                  : idx === questions[currentQ].ans 
+                    ? 'bg-green-100 border-green-300 text-green-800'
+                    : selectedOpt === idx 
+                      ? 'bg-red-50 border-red-200 text-red-800'
+                      : 'bg-slate-50 border-slate-100 text-slate-400'
+                }`}
+            >
+              {opt}
+              {selectedOpt !== null && idx === questions[currentQ].ans && <CheckCircle className="w-5 h-5 text-green-600"/>}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Global styles injected via style tag for simplicity in single-file requirement
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
+  
+  @keyframes pop-in {
+    from { opacity: 0; transform: translate(-50%, -40%) scale(0.9); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  .animate-pop-in { animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+  @keyframes slide-across {
+    0% { left: 10%; opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { left: 90%; opacity: 0; }
+  }
+  .animate-slide-across { animation: slide-across 1.5s linear forwards; }
+  
+  .btn-secondary {
+    @apply flex items-center gap-2 text-slate-500 hover:text-blue-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-slate-50;
+  }
+  
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+`;
+document.head.appendChild(style);
+
+export default CourseApp;
